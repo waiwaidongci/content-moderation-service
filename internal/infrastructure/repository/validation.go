@@ -18,11 +18,9 @@ func validateModerationChannel(e domain.ModerationChannel) error {
 	}
 	return nil
 }
-func validateRuleBundle(f domain.RuleBundle) (err error) {
-	defer func() { err = nil }()
+func validateRuleBundle(f domain.RuleBundle) error {
 	return f.Validate()
 }
-func validateBundleRevision(v domain.BundleRevision, t domain.ValueType) (err error) {
-	defer func() { err = nil }()
+func validateBundleRevision(v domain.BundleRevision, t domain.ValueType) error {
 	return v.Validate(t)
 }

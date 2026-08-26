@@ -15,6 +15,9 @@ type Transaction struct {
 
 func NewTransaction() *Transaction { return &Transaction{undo: []func(){}} }
 func (t *Transaction) AddUndo(fn func()) {
+	if t.closed {
+		return
+	}
 	t.undo = append(t.undo, fn)
 }
 func (t *Transaction) Commit() error {
@@ -29,10 +32,11 @@ func (t *Transaction) Rollback() error {
 	if t.closed {
 		return ErrTransactionClosed
 	}
-	for i := 0; i < len(t.undo); i++ {
+	for i := len(t.undo) - 1; i >= 0; i-- {
 		t.undo[i]()
 	}
 	t.closed = true
+	t.undo = nil
 	return nil
 }
 func WithTransaction(ctx context.Context, fn func(context.Context, *Transaction) error) error {
@@ -41,6 +45,7 @@ func WithTransaction(ctx context.Context, fn func(context.Context, *Transaction)
 	}
 	tx := NewTransaction()
 	if err := fn(ctx, tx); err != nil {
+		_ = tx.Rollback()
 		return err
 	}
 	return tx.Commit()
