@@ -19,7 +19,7 @@ func Evaluate(bundle RuleBundle, revision *BundleRevision, ctx EvaluationContext
 	value := bundle.DefaultValue
 	rules := bundle.Rules
 	revisionNo := bundle.ActiveBundleRevision
-	if revision != nil {
+	if revision != nil && revision.Status == "published" {
 		value, rules, revisionNo = revision.Value, revision.Rules, revision.Number
 	}
 	if ctx.Now.IsZero() {

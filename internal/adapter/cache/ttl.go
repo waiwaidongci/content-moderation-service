@@ -34,10 +34,17 @@ func (c *TTL) Get(_ context.Context, key string) (*domain.BundleRevision, bool) 
 		}
 		return nil, false
 	}
+	if e.revision.Status != "published" {
+		c.Delete(context.Background(), key)
+		return nil, false
+	}
 	v := e.revision
 	return &v, true
 }
 func (c *TTL) Set(_ context.Context, key string, v domain.BundleRevision) {
+	if v.Status != "published" {
+		return
+	}
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.data[key] = entry{revision: v, expires: time.Now().Add(c.ttl)}
