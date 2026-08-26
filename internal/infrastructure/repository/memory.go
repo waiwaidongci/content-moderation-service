@@ -87,15 +87,18 @@ func (m *Memory) ListRuleBundles(_ context.Context, p, e string) ([]domain.RuleB
 	}
 	return out, nil
 }
+func (m *Memory) NextBundleRevision(_ context.Context, bundleID string) (int, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return len(m.revisions[bundleID]) + 1, nil
+}
 func (m *Memory) SaveBundleRevision(_ context.Context, v domain.BundleRevision) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	arr := m.revisions[v.RuleBundleID]
-	for i, x := range arr {
+	for _, x := range arr {
 		if x.Number == v.Number {
-			arr[i] = v
-			m.revisions[v.RuleBundleID] = arr
-			return nil
+			return domain.ErrConflict
 		}
 	}
 	m.revisions[v.RuleBundleID] = append(arr, v)

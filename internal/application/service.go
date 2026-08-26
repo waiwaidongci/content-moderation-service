@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/ali/go-0821/content-moderation-service/internal/domain"
 	"sort"
+	"sync"
 	"time"
 )
 
@@ -13,7 +14,7 @@ type Service struct {
 	store Store
 	cache Cache
 	now   func() time.Time
-	nextRevision int
+	mu    sync.Mutex
 }
 
 func NewService(store Store, cache Cache) *Service {
@@ -63,12 +64,17 @@ func (s *Service) ListModerationChannels(ctx context.Context, p string) ([]domai
 }
 
 func (s *Service) CreateBundleRevision(ctx context.Context, bundleID string, v domain.BundleRevision) (domain.BundleRevision, error) {
-	s.nextRevision++
-	v.Number = s.nextRevision
 	f, err := s.store.GetRuleBundle(ctx, bundleID)
 	if err != nil {
 		return v, err
 	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	next, err := s.store.NextBundleRevision(ctx, bundleID)
+	if err != nil {
+		return v, err
+	}
+	v.Number = next
 	v.RuleBundleID = bundleID
 	v.Status = "draft"
 	v.CreatedAt = s.now()

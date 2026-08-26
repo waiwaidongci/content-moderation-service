@@ -14,6 +14,7 @@ type Store interface {
 	CreateRuleBundle(context.Context, domain.RuleBundle) error
 	GetRuleBundle(context.Context, string) (domain.RuleBundle, error)
 	ListRuleBundles(context.Context, string, string) ([]domain.RuleBundle, error)
+	NextBundleRevision(context.Context, string) (int, error)
 	SaveBundleRevision(context.Context, domain.BundleRevision) error
 	GetBundleRevision(context.Context, string, int) (domain.BundleRevision, error)
 	ListBundleRevisions(context.Context, string) ([]domain.BundleRevision, error)
