@@ -1,0 +1,20 @@
+openapi: 3.0.3
+info:
+  title: Content Moderation Service
+  version: 1.0.0
+paths:
+  /healthz: {get: {responses: {'200': {description: healthy}}}}
+  /readyz: {get: {responses: {'200': {description: ready}}}}
+  /metrics: {get: {responses: {'200': {description: metrics}}}}
+  /v1/moderation/policies: {post: {summary: Create policy draft, responses: {'201': {description: draft saved}, '400': {description: invalid rules}}}}
+  /v1/moderation/policies/publish: {post: {summary: Publish policy, responses: {'200': {description: policy published}, '404': {description: policy not found}}}}
+  /v1/moderation/check: {post: {summary: Moderate content, responses: {'200': {description: moderation decision}, '404': {description: policy not found}}}}
+  /v1/moderation/tasks/claim: {post: {summary: Claim review task, responses: {'200': {description: task claimed}, '404': {description: no task available}}}}
+  /v1/moderation/tasks/submit: {post: {summary: Submit review task, responses: {'200': {description: review submitted}, '409': {description: invalid lease}}}}
+  /v1/moderation/workspaces: {post: {summary: Create moderation workspace, responses: {'201': {description: workspace created}}}}
+  /v1/moderation/channels: {get: {summary: List moderation channels, responses: {'200': {description: channels}}}, post: {summary: Create moderation channel, responses: {'201': {description: channel created}}}}
+  /v1/moderation/bundles: {get: {summary: List rule bundles, responses: {'200': {description: bundles}}}, post: {summary: Create rule bundle, responses: {'201': {description: bundle created}}}}
+  /v1/moderation/decisions/{id}: {get: {summary: Get moderation decision, responses: {'200': {description: decision}}}}
+  /v1/moderation/decisions/{id}/explain: {get: {summary: Explain rule hits, responses: {'200': {description: hit explanation}}}}
+  /v1/moderation/appeals: {post: {summary: Create appeal, responses: {'201': {description: appeal created}}}, patch: {summary: Resolve appeal, responses: {'200': {description: appeal resolved}}}}
+  /v1/moderation/dictionaries: {post: {summary: Upsert moderation dictionary, responses: {'201': {description: dictionary saved}}}}
