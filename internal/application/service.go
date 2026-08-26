@@ -20,6 +20,9 @@ func NewService(store Store, cache Cache) *Service {
 }
 
 func (s *Service) CreateModerationWorkspace(ctx context.Context, p domain.ModerationWorkspace) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	if p.CreatedAt.IsZero() {
 		p.CreatedAt = s.now()
 	}
@@ -29,6 +32,9 @@ func (s *Service) CreateModerationWorkspace(ctx context.Context, p domain.Modera
 	return s.store.CreateModerationWorkspace(ctx, p)
 }
 func (s *Service) CreateModerationChannel(ctx context.Context, e domain.ModerationChannel) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	if e.CreatedAt.IsZero() {
 		e.CreatedAt = s.now()
 	}
@@ -38,6 +44,9 @@ func (s *Service) CreateModerationChannel(ctx context.Context, e domain.Moderati
 	return s.store.CreateModerationChannel(ctx, e)
 }
 func (s *Service) CreateRuleBundle(ctx context.Context, f domain.RuleBundle) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	if f.CreatedAt.IsZero() {
 		f.CreatedAt = s.now()
 	}

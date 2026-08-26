@@ -54,7 +54,7 @@ func (s *Server) middleware(next http.Handler) http.Handler {
 		}
 		w.Header().Set("X-Request-ID", id)
 		start := time.Now()
-		ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+		ctx, cancel := context.WithTimeout(r.Context(), 15*time.Second)
 		defer cancel()
 		next.ServeHTTP(w, r.WithContext(ctx))
 		s.log.Info("http_request", map[string]any{"method": r.Method, "path": r.URL.Path, "duration_ms": time.Since(start).Milliseconds(), "request_id": id})

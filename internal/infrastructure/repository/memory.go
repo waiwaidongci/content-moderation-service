@@ -19,7 +19,10 @@ type Memory struct {
 func NewMemory() *Memory {
 	return &Memory{workspaces: map[string]domain.ModerationWorkspace{}, envs: map[string]domain.ModerationChannel{}, bundles: map[string]domain.RuleBundle{}, revisions: map[string][]domain.BundleRevision{}, publications: map[string][]domain.PolicyPublication{}}
 }
-func (m *Memory) CreateModerationWorkspace(_ context.Context, p domain.ModerationWorkspace) error {
+func (m *Memory) CreateModerationWorkspace(ctx context.Context, p domain.ModerationWorkspace) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	if _, ok := m.workspaces[p.ID]; ok {
@@ -37,7 +40,10 @@ func (m *Memory) GetModerationWorkspace(_ context.Context, id string) (domain.Mo
 	}
 	return p, nil
 }
-func (m *Memory) CreateModerationChannel(_ context.Context, e domain.ModerationChannel) error {
+func (m *Memory) CreateModerationChannel(ctx context.Context, e domain.ModerationChannel) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	if _, ok := m.envs[e.ID]; ok {
@@ -58,7 +64,10 @@ func (m *Memory) ListModerationChannels(_ context.Context, p string) ([]domain.M
 	}
 	return out, nil
 }
-func (m *Memory) CreateRuleBundle(_ context.Context, f domain.RuleBundle) error {
+func (m *Memory) CreateRuleBundle(ctx context.Context, f domain.RuleBundle) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	if old, ok := m.bundles[f.ID]; ok {

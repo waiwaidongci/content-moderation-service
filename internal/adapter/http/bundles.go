@@ -1,7 +1,6 @@
 package httpadapter
 
 import (
-	"context"
 	"github.com/ali/go-0821/content-moderation-service/internal/domain"
 	"net/http"
 )
@@ -16,7 +15,7 @@ func (s *Server) moderationWorkspaces(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, err)
 		return
 	}
-	if err := s.bundles.CreateModerationWorkspace(context.Background(), v); err != nil {
+	if err := s.bundles.CreateModerationWorkspace(r.Context(), v); err != nil {
 		writeErr(w, err)
 		return
 	}
@@ -37,7 +36,7 @@ func (s *Server) moderationChannels(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, err)
 		return
 	}
-	if err := s.bundles.CreateModerationChannel(context.Background(), v); err != nil {
+	if err := s.bundles.CreateModerationChannel(r.Context(), v); err != nil {
 		writeErr(w, err)
 		return
 	}
@@ -58,7 +57,7 @@ func (s *Server) ruleBundles(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, err)
 		return
 	}
-	if err := s.bundles.CreateRuleBundle(context.Background(), v); err != nil {
+	if err := s.bundles.CreateRuleBundle(r.Context(), v); err != nil {
 		writeErr(w, err)
 		return
 	}
