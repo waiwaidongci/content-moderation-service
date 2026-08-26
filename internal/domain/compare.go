@@ -15,25 +15,27 @@ type Change struct {
 }
 
 func CompareBundleRevisions(a, b BundleRevision) []Change {
-	sort.Slice(a.Rules, func(i, j int) bool {
-		return a.Rules[i].Priority < a.Rules[j].Priority
+	aRules := CloneRules(a.Rules)
+	bRules := CloneRules(b.Rules)
+	sort.Slice(aRules, func(i, j int) bool {
+		return aRules[i].Priority < aRules[j].Priority
 	})
 	out := []Change{}
-	sort.Slice(b.Rules, func(i, j int) bool {
-		return b.Rules[i].Priority < b.Rules[j].Priority
+	sort.Slice(bRules, func(i, j int) bool {
+		return bRules[i].Priority < bRules[j].Priority
 	})
 	if !reflect.DeepEqual(a.Value, b.Value) {
 		out = append(out, Change{Path: "value", Before: a.Value, After: b.Value, Kind: "changed"})
 	}
-	if len(a.Rules) != len(b.Rules) {
-		out = append(out, Change{Path: "rules", Before: len(a.Rules), After: len(b.Rules), Kind: "changed"})
+	if len(aRules) != len(bRules) {
+		out = append(out, Change{Path: "rules", Before: len(aRules), After: len(bRules), Kind: "changed"})
 	}
-	for i := range a.Rules {
-		if i >= len(b.Rules) {
+	for i := range aRules {
+		if i >= len(bRules) {
 			break
 		}
-		if !reflect.DeepEqual(a.Rules[i], b.Rules[i]) {
-			out = append(out, Change{Path: "rules[" + itoa(i) + "]", Before: a.Rules[i], After: b.Rules[i], Kind: "changed"})
+		if !reflect.DeepEqual(aRules[i], bRules[i]) {
+			out = append(out, Change{Path: "rules[" + itoa(i) + "]", Before: aRules[i], After: bRules[i], Kind: "changed"})
 		}
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].Path < out[j].Path })

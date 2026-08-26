@@ -3,7 +3,6 @@ package domain
 
 import (
 	"fmt"
-	"sort"
 	"strings"
 	"time"
 )
@@ -64,9 +63,6 @@ type Segment struct {
 }
 
 func (s Segment) Matches(tags map[string]string) bool {
-	sort.Slice(s.Constraints, func(i, j int) bool {
-		return s.Constraints[i].Key < s.Constraints[j].Key
-	})
 	for _, c := range s.Constraints {
 		if !c.Matches(tags) {
 			return false

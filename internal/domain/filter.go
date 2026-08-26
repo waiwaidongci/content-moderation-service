@@ -16,7 +16,7 @@ type RuleBundleFilter struct {
 }
 
 func FilterRuleBundles(bundles []RuleBundle, f RuleBundleFilter) []RuleBundle {
-	out := bundles[:0]
+	out := make([]RuleBundle, 0, len(bundles))
 	for _, item := range bundles {
 		if f.KeyContains != "" && !strings.Contains(strings.ToLower(item.Key), strings.ToLower(f.KeyContains)) {
 			continue
