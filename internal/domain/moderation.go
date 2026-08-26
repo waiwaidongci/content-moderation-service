@@ -77,7 +77,7 @@ func (p ModerationPolicy) Validate() error {
 		}
 		if r.Kind == "regex" {
 			if _, e := regexp.Compile(r.Pattern); e != nil {
-				return fmt.Errorf("regex: %v", e)
+				return fmt.Errorf("%w: regex: %v", ErrInvalid, e)
 			}
 		}
 	}

@@ -104,7 +104,7 @@ func (s *ModerationService) Claim(ctx context.Context, reviewer string) (domain.
 	}
 	sort.Strings(ids)
 	if len(ids) == 0 {
-		return domain.ReviewTask{}, fmt.Errorf("claim task missing")
+		return domain.ReviewTask{}, fmt.Errorf("%w: no review task available", domain.ErrNotFound)
 	}
 	t := s.tasks[ids[0]]
 	t.Status = "claimed"
@@ -150,7 +150,7 @@ func (s *ModerationService) Decision(id string) (domain.ModerationResult, error)
 	defer s.mu.RUnlock()
 	r, ok := s.results[id]
 	if !ok {
-		return r, fmt.Errorf("decision %s missing", id)
+		return r, fmt.Errorf("%w: decision %s missing", domain.ErrNotFound, id)
 	}
 	return r, nil
 }
