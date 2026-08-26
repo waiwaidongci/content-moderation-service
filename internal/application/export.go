@@ -16,7 +16,7 @@ type Export struct {
 func (s *Service) ExportModerationWorkspace(ctx context.Context, id string) (Export, error) {
 	p, e := s.store.GetModerationWorkspace(ctx, id)
 	if e != nil {
-		return Export{}, nil
+		return Export{}, e
 	}
 	envs, _ := s.store.ListModerationChannels(ctx, id)
 	bundles := []domain.RuleBundle{}

@@ -18,9 +18,6 @@ func DecodeValue(data []byte, t ValueType) (any, error) {
 	if err := json.Unmarshal(data, &v); err != nil {
 		return nil, fmt.Errorf("decode value: %w", err)
 	}
-	if v == nil {
-		return nil, nil
-	}
 	if err := ValidateValue(t, v); err != nil {
 		return nil, err
 	}
@@ -30,7 +27,12 @@ func CloneRules(in []Rule) []Rule {
 	out := make([]Rule, len(in))
 	for i, r := range in {
 		out[i] = r
-		out[i].Tags = nil
+		if r.Tags != nil {
+			out[i].Tags = make(map[string]string, len(r.Tags))
+			for k, v := range r.Tags {
+				out[i].Tags[k] = v
+			}
+		}
 	}
 	return out
 }

@@ -22,6 +22,9 @@ func (s *Service) ImportModerationWorkspace(ctx context.Context, data []byte) er
 	}
 	for i := range in.RuleBundles {
 		for j := range in.RuleBundles[i].Rules {
+			if in.RuleBundles[i].Rules[j].Tags == nil {
+				in.RuleBundles[i].Rules[j].Tags = map[string]string{}
+			}
 			in.RuleBundles[i].Rules[j].Tags["source"] = "import"
 		}
 	}
@@ -35,7 +38,13 @@ func (s *Service) ImportModerationWorkspace(ctx context.Context, data []byte) er
 func DecodeRuleBundle(data []byte) (domain.RuleBundle, error) {
 	var f domain.RuleBundle
 	err := json.Unmarshal(data, &f)
+	if err != nil {
+		return f, err
+	}
 	for i := range f.Rules {
+		if f.Rules[i].Tags == nil {
+			f.Rules[i].Tags = map[string]string{}
+		}
 		f.Rules[i].Tags["source"] = "import"
 	}
 	return f, err
