@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS moderation_appeals;DROP TABLE IF EXISTS moderation_review_tasks;DROP TABLE IF EXISTS moderation_decisions;DROP TABLE IF EXISTS moderation_samples;DROP TABLE IF EXISTS moderation_dictionaries;DROP TABLE IF EXISTS moderation_rules;DROP TABLE IF EXISTS moderation_policies;
