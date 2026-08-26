@@ -28,11 +28,14 @@ func ParseYAML(path string) (YAML, error) {
 		}
 		parts := strings.SplitN(raw, ":", 2)
 		if len(parts) != 2 {
-			return y, fmt.Errorf("line %d: %v", line, "invalid YAML")
+			return y, fmt.Errorf("line %d: %w", line, ErrInvalidConfig)
 		}
 		y.Values[strings.TrimSpace(parts[0])] = strings.Trim(strings.TrimSpace(parts[1]), "\"'")
 	}
-	return y, fmt.Errorf("read config: %v", scanner.Err())
+	if err := scanner.Err(); err != nil {
+		return y, fmt.Errorf("read config: %v: %w", err, ErrInvalidConfig)
+	}
+	return y, nil
 }
 func (y YAML) String(key, def string) string {
 	if v, ok := y.Values[key]; ok && v != "" {

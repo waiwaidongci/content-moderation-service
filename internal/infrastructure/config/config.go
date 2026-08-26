@@ -2,10 +2,13 @@
 package config
 
 import (
+	"errors"
 	"os"
 	"strconv"
 	"strings"
 )
+
+var ErrInvalidConfig = errors.New("invalid config")
 
 type Config struct {
 	HTTPAddr        string
@@ -29,6 +32,17 @@ func Load() Config {
 		}
 	}
 	return c
+}
+
+func LoadChecked() (Config, error) {
+	path := os.Getenv("CONTENT_MODERATION_CONFIG")
+	if path == "" {
+		path = "configs/config.yaml"
+	}
+	if _, err := ParseYAML(path); err != nil {
+		return Config{}, err
+	}
+	return Load(), nil
 }
 func ParseTags(s string) map[string]string {
 	out := map[string]string{}
