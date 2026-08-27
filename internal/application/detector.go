@@ -3,6 +3,7 @@ package application
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sync"
 )
@@ -26,13 +27,13 @@ func RunDetectors(ctx context.Context, text string, detectors []Detector) ([]Det
 	for _, d := range detectors {
 		wg.Add(1)
 		go func(det Detector) {
+			defer wg.Done()
 			r, err := det.Detect(ctx, text)
 			if err != nil {
 				errs <- fmt.Errorf("detector %s: %w", det.Name(), err)
 				return
 			}
 			out <- r
-			wg.Done()
 		}(d)
 	}
 	wg.Wait()
@@ -42,10 +43,12 @@ func RunDetectors(ctx context.Context, text string, detectors []Detector) ([]Det
 	for r := range out {
 		results = append(results, r)
 	}
-	if len(results) == 0 {
-		for e := range errs {
-			return nil, e
-		}
+	var errList []error
+	for e := range errs {
+		errList = append(errList, e)
+	}
+	if len(errList) > 0 {
+		return results, errors.Join(errList...)
 	}
 	return results, nil
 }
