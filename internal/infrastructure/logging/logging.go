@@ -3,6 +3,7 @@ package logging
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"time"
 )
@@ -17,7 +18,15 @@ func (l *Logger) Event(level, msg string, fields map[string]any) {
 	fields["level"] = level
 	fields["message"] = msg
 	fields["ts"] = time.Now().UTC().Format(time.RFC3339Nano)
-	b, _ := json.Marshal(fields)
+	b, err := json.Marshal(fields)
+	if err != nil {
+		b, _ = json.Marshal(map[string]any{
+			"level":   level,
+			"message": msg,
+			"ts":      fields["ts"],
+			"error":   fmt.Sprintf("log field serialization failed: %v", err),
+		})
+	}
 	l.base.Print(string(b))
 }
 func (l *Logger) Info(msg string, fields map[string]any)  { l.Event("info", msg, fields) }
