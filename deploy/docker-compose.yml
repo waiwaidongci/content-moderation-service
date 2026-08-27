@@ -1,0 +1,10 @@
+services:
+  content-moderation:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      CONTENT_MODERATION_HTTP_ADDR: ":8083"
+      CONTENT_MODERATION_ENVIRONMENT: docker
